@@ -60,7 +60,9 @@ class ErrorHandler extends ServerInterceptor {
       }
 
       private def closeWithException(t: Exception, requestHeader: Metadata) {
-        logger.severe(t.getMessage)
+        val status = Status.Code.INTERNAL.toStatus.withDescription(t.getMessage).withCause(t)
+        logger.severe(status.toString)
+        throw new StatusRuntimeException(status)
       }
     }
   }

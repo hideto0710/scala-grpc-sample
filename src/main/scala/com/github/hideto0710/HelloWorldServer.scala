@@ -7,6 +7,7 @@ import io.grpc._
 
 import scala.concurrent.{ExecutionContext, Future}
 import com.github.hideto0710.protos.hello.{GreeterGrpc, HelloReply, HelloRequest}
+import io.grpc.util.TransmitStatusRuntimeExceptionInterceptor
 
 
 object HelloWorldServer {
@@ -31,7 +32,8 @@ class HelloWorldServer(executionContext: ExecutionContext) { self =>
         ServerInterceptors.intercept(
           GreeterGrpc.bindService(new GreeterImpl, executionContext),
           new Logging,
-          new ErrorHandler
+          new ErrorHandler,
+          TransmitStatusRuntimeExceptionInterceptor.instance()
         )
       )
       .build
@@ -62,7 +64,7 @@ class HelloWorldServer(executionContext: ExecutionContext) { self =>
       Future.successful(reply)
     }
     override def sayError(req: HelloRequest): Future[HelloReply] = {
-      throw new Exception("req.name")
+      throw new Exception(req.name)
     }
   }
 }
