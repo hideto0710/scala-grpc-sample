@@ -5,6 +5,7 @@ package com.github.hideto0710.protos;
 service Greeter {
     rpc SayHello (HelloRequest) returns (HelloReply) {}
     rpc SayError (HelloRequest) returns (HelloReply) {}
+    rpc SayHelloAll (HelloRequest) returns (stream HelloReply) {}
 }
 
 message HelloRequest {
