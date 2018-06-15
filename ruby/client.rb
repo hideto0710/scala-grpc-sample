@@ -7,8 +7,14 @@ $LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
 require 'grpc'
 require 'hello_services_pb'
 
+require_relative './interceptors/logging'
+
 def main
-  stub = Com::Github::Hideto0710::Protos::Greeter::Stub.new('localhost:50051', :this_channel_is_insecure)
+  stub = Com::Github::Hideto0710::Protos::Greeter::Stub.new(
+      'localhost:50051',
+      :this_channel_is_insecure,
+      interceptors: [Logging.new]
+  )
   user = ARGV.size > 0 ?  ARGV[0] : 'world'
   message = stub.say_hello(Com::Github::Hideto0710::Protos::HelloRequest.new(name: user)).message
   p "Greeting: #{message}"
